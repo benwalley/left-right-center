@@ -3,25 +3,10 @@ var playGame, simulatedGame;
 
 class Game {
 	constructor() {
-		this.qtyPlayers = 6;
-		this.gameMode = 'play';
-		
+
 	}
 
-	simulateTurn() {
-		this.players = [];
-		this.center = 0;
-		this.currentPlayer = 0;
-		for(var i = 0; i < this.qtyPlayers; i++) {
-			this.players.push(3)
-		}
 
-		while(this.center < ((this.players.length * 3) - 1)) {
-			this.playerTurn();
-		}
-		
-		return this.getWinner(this.players)
-	}
 
 	
 
@@ -169,7 +154,7 @@ class PlayGame extends Game {
 		let roll = this.rollDice(3)
 		console.log("rolled", roll)
 	}
-
+	// create data for all players
 	createPlayerData = () => {
 		let players = document.querySelectorAll(".player");
 
@@ -179,6 +164,12 @@ class PlayGame extends Game {
 				chips: 3
 			})
 		}
+
+		this.updateHtml();
+	}
+
+	updateHtml = () => {
+		let players = document.querySelectorAll(".player");
 
 		for (var i = 0; i < players.length; i++) {
 			let player = players[i];
@@ -271,15 +262,11 @@ function eventListeners() {
 					// play game
 					simulatedGame.style.display = "none";
 					playGame.style.display = "block";
-					// self.gameMode = "play";
-					// self.startPlaying()
 
 				} else if (e.target.classList.contains("toggle-simulate")) {
 					// simulate games
 					simulatedGame.style.display = "block";
 					playGame.style.display = "none";
-					// self.gameMode = "simulate";
-					// self.startSimulatedGame();
 				}
 			})
 		}
