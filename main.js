@@ -1,9 +1,14 @@
+// variables for the types of games
+var playGame, simulatedGame;
+
 class Game {
-	constructor(qtyPlayers) {
-		this.qtyPlayers = qtyPlayers;
+	constructor() {
+		this.qtyPlayers = 6;
+		this.gameMode = 'play';
+		
 	}
 
-	playGame() {
+	simulateTurn() {
 		this.players = [];
 		this.center = 0;
 		this.currentPlayer = 0;
@@ -11,17 +16,14 @@ class Game {
 			this.players.push(3)
 		}
 
-		// this.players[0] = 2;
-
 		while(this.center < ((this.players.length * 3) - 1)) {
 			this.playerTurn();
 		}
-			// when the game is over
-			// console.log("hit final data", this.players);
-			// console.log("player", this.getWinner(this.players), "won!")
-			// finalData.push(players);
-			return this.getWinner(this.players)
+		
+		return this.getWinner(this.players)
 	}
+
+	
 
 	// nicely self contained function
 	rollDice(qty) {
@@ -48,6 +50,8 @@ class Game {
 
 		return finalRoll;
 	}
+
+	
 
 	passLeft() {
 		this.players[this.currentPlayer] = this.players[this.currentPlayer] - 1;
@@ -108,22 +112,178 @@ class Game {
 	}
 }
 
-function init(numberGames, numberPlayers) {
-	var winsArray = new Array(numberPlayers);
-	for(var i = 0; i < winsArray.length; i++) {
-		winsArray[i] = 0;
+// <button id = "restart-play-game">Restart</button>
+
+// 			<button id = "start-play-game">Start</button>
+
+// 			<label>Number of players</label>
+// 			<input type="number" name="number-player" value="6" id ="play-number-players" min="0">
+
+// 			<button class="roll-dice">Roll Dice</button>
+
+class PlayGame extends Game {
+	constructor() {
+		super();
+		// add event listeners;
+		this.addEventListeners();
+		this.numberPlayers = document.getElementById("play-number-players").value;
+		this.playerData = [];
 	}
 
-	for(var i = 0; i < numberGames; i++) {
-		let finalData = new Game(numberPlayers);
-		winner = finalData.playGame();
-		winsArray[winner] = winsArray[winner] + 1
+	addEventListeners() {
+		let self = this;
+		let numberPlayers = document.getElementById("play-number-players");
+		let restart = document.getElementById("restart-play-game");
+		let start = document.getElementById("start-play-game");
+		let roll = document.getElementById("play-roll-dice");
+
+		numberPlayers.addEventListener("change", function(e) {
+			self.numberPlayers = e.target.value;
+			self.start();
+
+		})
+
+		// restart.addEventListener("click", function(e) {
+		// 	self.start();
+		// })
+
+		start.addEventListener("click", function(e) {
+			self.start();
+		})
+
+		roll.addEventListener("click", function(e) {
+			self.roll();
+		})
 	}
 
-	// TODO: Find out percentages
-	console.log(winsArray)
+	restart() {
+		this.start();
+	}
+
+	start() {
+		this.createPlayers(this.numberPlayers);
+		this.createPlayerData();
+	}
+
+	roll() {
+		let roll = this.rollDice(3)
+		console.log("rolled", roll)
+	}
+
+	createPlayerData = () => {
+		let players = document.querySelectorAll(".player");
+
+		for (var i = 0; i < players.length; i++) {
+			this.playerData.push({
+				name: "player", i,
+				chips: 3
+			})
+		}
+
+		for (var i = 0; i < players.length; i++) {
+			let player = players[i];
+			// get child elements to edit.
+			let name = player.querySelector(".name");
+			let dice = player.querySelector(".dice");
+			let score = player.querySelector(".score");
+			let chips = player.querySelector(".chips");
+
+			name.innerHTML = this.playerData[i].name;
+			chips.innerHTML = this.playerData[i].chips;
+			chips.setAttribute("data-chips", this.playerData[i].chips)
+		}
+	}
+
+	// create html structure for players
+	createPlayers(qty) {
+		let players = document.querySelector(".players");
+		players.innerHTML = "";
+		for(let i = 0; i < qty; i++) {
+			let player = document.createElement("div");
+			player.classList.add("player");
+			// create child divs
+			let dice = document.createElement("div");
+			let name = document.createElement("div");
+			let score = document.createElement("div");
+			let chips = document.createElement("div");
+			// Add classes
+			dice.classList.add("dice");
+			name.classList.add("name");
+			score.classList.add("score");
+			chips.classList.add("chips");
+
+			// Add elements into player div;
+			player.appendChild(name);
+			player.appendChild(dice);
+			player.appendChild(score);
+			player.appendChild(chips);
+
+		
+			players.appendChild(player);
+		}
+	}
+}
+
+class SimulatedGame extends Game {
+	constructor() {
+		// add event listeners.
+		super();
+	}
+
+	startSimulatedGame() {
+		var winsArray = new Array(numberPlayers);
+		for(var i = 0; i < winsArray.length; i++) {
+			winsArray[i] = 0;
+		}
+
+		for(var i = 0; i < numberGames; i++) {
+			let finalData = new Game(numberPlayers);
+			winner = finalData.simulateGame();
+			winsArray[winner] = winsArray[winner] + 1
+		}
+
+		// TODO: Find out percentages
+		console.log(winsArray)
+	}
+}
+
+function init() {
+	// EVENT LISTENERS
+	// controlls game mode toggle
+	eventListeners();
+
+	// initialize the two games
+	playGame = new PlayGame();
+	simulatedGame = new SimulatedGame();
 	
 }
 
+function eventListeners() {
+		let self = this;
+		let toggles = document.querySelectorAll(".game-toggle");
 
-init(1000, 6);
+		let playGame = document.querySelector(".playGame");
+		let simulatedGame = document.querySelector(".simulatedGame");
+
+		for (var i = toggles.length - 1; i >= 0; i--) {
+			toggles[i].addEventListener("click", function(e) {
+				if(e.target.classList.contains("toggle-play")) {
+					// play game
+					simulatedGame.style.display = "none";
+					playGame.style.display = "block";
+					// self.gameMode = "play";
+					// self.startPlaying()
+
+				} else if (e.target.classList.contains("toggle-simulate")) {
+					// simulate games
+					simulatedGame.style.display = "block";
+					playGame.style.display = "none";
+					// self.gameMode = "simulate";
+					// self.startSimulatedGame();
+				}
+			})
+		}
+	}
+
+
+init();

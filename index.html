@@ -6,6 +6,37 @@
 	<link rel="stylesheet" type="text/css" href="./main.css">
 </head>
 <body>
+	<nav class="mainNav">
+		<div class="toggle">
+			<div class="game-toggle toggle-play">Play Game</div>
+			<div class="game-toggle toggle-simulate">Simulate Game</div>
+		</div>
+	</nav>
+	<div class="mainContaining">
+		<!-- PLAYABLE GAME -->
+		<div class="playGame">
+			<button id = "restart-play-game">Restart</button>
+
+			<button id = "start-play-game">Start</button>
+
+			<label>Number of players</label>
+			<input type="number" name="number-player" value="6" id ="play-number-players" min="0">
+
+			<button class="roll-dice" id = "play-roll-dice">Roll Dice</button>
+			<div class="players"></div>
+		</div>
+		<!-- SIMULATED GAME -->
+		<div class="simulatedGame">
+			<button id = "restart-simulate-game">Restart</button>
+
+			<button id = "start-simulate-game">Start simulation</button>
+
+			<label>Number of players</label>
+			<input type="number" name="number-player" id ="simulated-number-players" min="0">
+
+			<div class="players"></div>
+		</div>
+	</div>
 
 	<script type="text/javascript" src = "./main.js"></script>
 
